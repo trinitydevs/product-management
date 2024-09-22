@@ -1,17 +1,27 @@
-<?php
+<?php 
 namespace Vendor\Development\Model;
+
+use PDO;
 
 class Logs
 {
-    private int $id;
-    private int $id_product;
-    private string $type;
-    private string $message;
+    private $pdo;
 
-    public $logs;
-
-    public function __construct()
+    public function __construct(PDO $pdo)
     {
-        echo 'Logs';
+        $this->pdo = $pdo;
+    }
+
+    public function createLog($action, $productId, $userInsert)
+    {
+        $sql = "INSERT INTO logs (operation_type, operation_date, product_id) 
+                VALUES (:operation_type, :operation_date, :product_id)";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':operation_type' => $action,
+            ':operation_date' => date('Y-m-d H:i:s'),
+            ':product_id' => $productId
+        ]);
     }
 }
