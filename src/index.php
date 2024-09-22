@@ -2,43 +2,54 @@
 namespace Vendor\Development;
 require_once '../vendor/autoload.php';
 
-use Vendor\Development\Controller\Logs;
 use Vendor\Development\Controller\ProductsController;
 use Vendor\Development\Model\Products;
 use Vendor\Development\Database\Database;
 
-
-
-$logs = new Logs();
+//$logs = new Logs();
 
 $database = new Database();
-$pdo = $database->connect(); 
-$products = new Products($pdo);
+$pdo = $database->connect();
+$productsModel = new Products($pdo);
+$productsController = new ProductsController($productsModel);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = $_SERVER['REQUEST_URI'];
 
-function loadView($viewName)
+function loadView($viewName, $data = [])
 {
+    extract($data); // Converte os índices do array $data em variáveis
     include __DIR__ . "/views/{$viewName}.php";
 }
 
-loadView('productManagement');
-
-
 switch ($method) {
     case 'GET':
-        $products->get();
-        break;        
+        $products = $productsController->get();
+
+        $productDetails = null;
+        if (isset($_GET['product'])) {
+            $productId = $_GET['product'];
+            $productDetails = $productsController->getProductDetails($productId);
+        }
+
+        loadView('productManagement', [
+            'products' => $products,
+            'productDetails' => $productDetails
+        ]);
+        break;
+
     case 'POST':
-        $products->post();
+        (isset($_POST['_method']) && $_POST['_method'] === 'DELETE')
+            ? $productsController->delete()
+            : (isset($_POST['_method']) && $_POST['_method'] === 'PUT'
+                ? $productsController->put()
+                : $productsController->post());
         break;
-    case 'PUT':
-        $products->put();
-        break;
+
     case 'DELETE':
-        $products->delete();
+        $productsController->delete();
         break;
+
     default:
         echo "Método HTTP não suportado.";
         break;

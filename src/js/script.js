@@ -1,9 +1,9 @@
-$(document).ready(function() {
-    $( ".options" ).on( "click", function() {
+$(document).ready(function () {
+    $(".options").on("click", function () {
         var index = $(this).index();
         var target_div;
 
-        switch(index){
+        switch (index) {
             case 0:
                 target_div = '#post';
                 break;
@@ -19,8 +19,8 @@ $(document).ready(function() {
         }
 
         if (!$(target_div).is(":visible")) {
-            $('#post, #get, #put, #delete').fadeOut(200); 
-            $(target_div).delay(200).fadeIn(200); 
+            $('#post, #get, #put, #delete').fadeOut(200);
+            $(target_div).delay(200).fadeIn(200);
         }
     });
 });

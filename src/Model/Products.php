@@ -2,6 +2,7 @@
 namespace Vendor\Development\Model;
 
 use PDO;
+use PDOException;
 
 class Products
 {
@@ -12,80 +13,75 @@ class Products
         $this->pdo = $pdo;
     }
 
-    public function get()
+    public function create($data)
     {
-        if (isset($_GET['id'])) {
-            $id = $_GET['id'];
-            $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id = :id");
-            $stmt->execute(['id' => $id]);
-            $product = $stmt->fetch(PDO::FETCH_ASSOC);
-            echo json_encode($product);
-        } else {
-            $stmt = $this->pdo->query("SELECT * FROM products");
-            $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($products);
-        }
+        $sql = "INSERT INTO products (name, description, user_insert, price, date_hour, stock) 
+                VALUES (:name, :description, :user_insert, :price, :date_hour, :stock)";
+
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ':name' => $data['name'],
+            ':description' => $data['description'],
+            ':user_insert' => $data['user_insert'],
+            ':price' => $data['price'],
+            ':date_hour' => date('Y-m-d H:i:s'),
+            ':stock' => $data['stock']
+        ]);
+        return $this->pdo->lastInsertId();
     }
 
-    public function post()
+    public function getAll()
     {
-        $data = json_decode(file_get_contents('php://input'), true);
+        $sql = "SELECT id, name, description, price, date_hour, stock FROM products";
+        $stmt = $this->pdo->query($sql);
 
-        $name = $data['name'] ?? null;
-        $description = $data['description'] ?? null;
-        $price = $data['price'] ?? null;
-        $stock = $data['stock'] ?? null;
-
-        if ($name && $description && $price && $stock) {
-            $stmt = $this->pdo->prepare("INSERT INTO products (name, description, price, stock) VALUES (:name, :description, :price, :stock)");
-            $stmt->execute([
-                ':name' => $name,
-                ':description' => $description,
-                ':price' => $price,
-                ':stock' => $stock
-            ]);
-            echo "Produto criado com sucesso!";
-        } else {
-            echo "Dados incompletos.";
-        }
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function put()
+    public function getById($id)
     {
-        $data = json_decode(file_get_contents('php://input'), true);
+        $sql = "SELECT * FROM products WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
 
-        $id = $data['id'] ?? null;
-        $name = $data['name'] ?? null;
-        $description = $data['description'] ?? null;
-        $price = $data['price'] ?? null;
-        $stock = $data['stock'] ?? null;
-
-        if ($id && $name && $description && $price && $stock) {
-            $stmt = $this->pdo->prepare("UPDATE products SET name = :name, description = :description, price = :price, stock = :stock WHERE id = :id");
-            $stmt->execute([
-                ':name' => $name,
-                ':description' => $description,
-                ':price' => $price,
-                ':stock' => $stock,
-                ':id' => $id
-            ]);
-            echo "Produto atualizado com sucesso!";
-        } else {
-            echo "Dados incompletos.";
-        }
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function delete()
+    public function update($data)
     {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $id = $data['id'] ?? null;
+        $sql = "UPDATE products 
+                SET name = :name, description = :description, price = :price, stock = :stock
+                WHERE id = :id";
 
-        if ($id) {
-            $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = :id");
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ':name' => $data['name'],
+            ':description' => $data['description'],
+            ':price' => $data['price'],
+            ':stock' => $data['stock'],
+            ':id' => $data['id']
+        ]);
+
+        return $stmt->rowCount();
+    }
+
+    public function delete($id)
+    {
+        if (empty($id)) {
+            return 0;
+        }
+
+        try {
+            $sql = "DELETE FROM products WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
             $stmt->execute([':id' => $id]);
-            echo "Produto excluído com sucesso!";
-        } else {
-            echo "ID não informado.";
+
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            echo "Erro ao excluir o produto: " . $e->getMessage();
+            return 0;
         }
     }
 }

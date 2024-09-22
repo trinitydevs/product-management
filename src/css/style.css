@@ -15,7 +15,7 @@ input, button, select, textarea{
 
 div{
     background-color: #252121;
-    padding: 1.5rem;
+    padding: 0.9rem;
     border-radius: 0.3rem;
     min-width: 20rem;
     margin: 1rem 0rem 1rem 0rem;
@@ -25,11 +25,10 @@ div p, label,
 .product-data > h6, 
 #options > h2{
     color: #fff;
-    padding: 0.3rem 0rem 0.3rem 0rem;
 }
 
-form > input[type="button"], #change-options > button, table input[type="button"]{
-    margin: 7px 0px 7px 0px;
+form > input[type="button"], #change-options > button, table input[type="button"], input[type="submit"]{
+    margin: 0.5px 0px 0.5px 0px;
     background-color: #eeeaf3;
     font-weight: 400;
     border-radius: 0.1rem;
