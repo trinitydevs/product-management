@@ -1,0 +1,19 @@
+{
+    "name": "app/server",
+    "autoload": {
+        "psr-4": {
+            "App\\Server\\": "Src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Trinity Domingues",
+            "email": "trinitynascimento@gmail.com"
+        },
+        {
+            "name": "Pedro Fink",
+            "email": "pedrofinksilva@gmail.com"
+        }
+    ],
+    "require": {}
+}
