@@ -28,8 +28,8 @@ new Vue({
                 case 'post':
                     this.insertModalVisible = true;
                     this.modalTitle = 'Cadastrar produtos'; 
-                    this.selectAction('POST');
-                    this.createProduct();
+                    // this.selectAction('POST');
+                    // this.createProduct();
 
                     break;
                 case 'put':
@@ -79,55 +79,55 @@ new Vue({
                 console.error('Erro ao processar a requisição:', error);
             }
         },
-        // async getProducts() {
-        //     let url = 'http://localhost:8080/products';
-        //     if (this.product.id) url += `/${this.product.id}`;
+        async getProducts() {
+            let url = 'http://localhost:8080/products';
+            if (this.product.id) url += `/${this.product.id}`;
 
-        //     const response = await fetch(url);
-        //     this.products = await response.json();
-        // },
-        // async createProduct() {
-        //     const response = await fetch('http://localhost:8080/products', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(this.product)
-        //     });
-        //     console.log(await response.json());
-        // },
-        // async updateProduct() {
-        //     const response = await fetch(`http://localhost:8080/products/${this.product.id}`, {
-        //         method: 'PUT',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(this.product)
-        //     });
-        //     console.log(await response.json());
-        //     console.log('Abrindo modal de edição para:', product);
+            const response = await fetch(url);
+            this.products = await response.json();
+        },
+        async createProduct() {
+            const response = await fetch('http://localhost:8080/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.product)
+            });
+            console.log(await response.json());
+        },
+        async updateProduct() {
+            const response = await fetch(`http://localhost:8080/products/${this.product.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.product)
+            });
+            console.log(await response.json());
+            console.log('Abrindo modal de edição para:', product);
 
-        //     this.productToEdit = { ...product };
-        //     setTimeout(() => {
-        //         this.editModalVisible = true; 
-        //     }, 100);
-        // },
-        // async deleteProduct() {
-        //     const response = await fetch(`http://localhost:8080/products/${this.product.id}`, {
-        //         method: 'DELETE',
-        //         headers: { 'Content-Type': 'application/json' }
-        //     });
-        //     console.log(await response.json());
-        // },
-        // async fetchLogs() {
-        //     const response = await fetch('http://localhost:8080/logs');
-        //     this.logs = await response.json();
-        // },
-        // formatPrice(value) {
-        //     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-        // },
-        // formatDate(date) {
-        //     return new Date(date).toLocaleString('pt-BR');
-        // }
+            this.productToEdit = { ...product };
+            setTimeout(() => {
+                this.editModalVisible = true; 
+            }, 100);
+        },
+        async deleteProduct() {
+            const response = await fetch(`http://localhost:8080/products/${this.product.id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            console.log(await response.json());
+        },
+        async fetchLogs() {
+            const response = await fetch('http://localhost:8080/logs');
+            this.logs = await response.json();
+        },
+        formatPrice(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        },
+        formatDate(date) {
+            return new Date(date).toLocaleString('pt-BR');
+        }
     },
     mounted() {
-        // this.fetchLogs();
+        this.fetchLogs();
     },
     template: `
     <div id="app">
@@ -172,7 +172,7 @@ new Vue({
                         <label for="stock">Estoque</label>
                         <input type="text" v-model="product.stock" class="form-control">
                     </div>
-                    <button type="button" class="btn btn-primary" @click="handleSubmit">Inserir</button>
+                    <button type="button" class="btn btn-primary" @click="createProduct">Inserir</button>
                 </div>
             </div>
         </div>
@@ -234,6 +234,7 @@ new Vue({
                 </table>            
             </div>
         </div>
+        </form>
     </div>
     `
 });

@@ -51,12 +51,14 @@ switch ($method) {
     
     case 'POST':
         $data = json_decode(file_get_contents('php://input'));
+        var_dump($data); 
         $product = new Product();
-        $product->setName($data->nameProduct);
-        $product->setDesc($data->descProduct);
-        $product->setStock($data->stockProduct);
-        $product->setPrice($data->priceProduct);
+        $product->setName($data->name);
+        $product->setDesc($data->description);
+        $product->setStock($data->stock);
+        $product->setPrice($data->price);
         $product->setUserInsert(1);
+        var_dump($product); exit;
         $response = ProductController::post($product);
         echo json_encode($response);
 
