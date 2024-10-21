@@ -180,6 +180,10 @@ new Vue({
         <div class="section" v-if="currentView === 'get'">
             <h2 class="text-center">{{ modalTitle }}</h2>
             <button class="btn btn-secondary mb-3" @click="insertModalVisible = false">Voltar</button>    
+            <div class="form-group">
+                <label for="id">Id</label>
+                <input type="text" v-model="product.id" class="form-control">
+            </div>
             <div class="table-center">
                 <table id="tableProducts">
                     <thead>
